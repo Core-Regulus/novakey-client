@@ -1,0 +1,25 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run All Tests",
+      "type": "shell",
+      "command": "go test ./...",
+      "group": "test",
+      "problemMatcher": "$go"
+    },
+    {
+      "label": "Run Current Test File",
+      "type": "shell",
+      "command": "go test ${fileDirname}",
+      "group": "test",
+      "problemMatcher": "$go"
+    },
+    {
+      "label": "Lint",
+      "type": "shell",
+      "command": "golangci-lint run ./...",
+      "problemMatcher": []
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [    
+    {
+      "name": "Debug All Tests in Package",
+      "type": "go",
+      "request": "launch",
+      "mode": "test",
+      "program": "${workspaceFolder}"
+    },
+    {
+      "name": "Debug Single Test File",
+      "type": "go",
+      "request": "launch",
+      "mode": "test",
+      "program": "${file}"
+    }
+  ]
+}
