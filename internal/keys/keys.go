@@ -64,7 +64,6 @@ func ParseOpenSSHED25519Signer(keyPEM string) (ssh.Signer, ed25519.PublicKey, er
 		return nil, nil, errors.New("not an ed25519 key")
 	}
 
-	// Extract the public key
 	if ed25519PubKey, ok := signer.PublicKey().(ssh.CryptoPublicKey); ok {
 		if cryptoPub, ok := ed25519PubKey.CryptoPublicKey().(ed25519.PublicKey); ok {
 			return signer, cryptoPub, nil

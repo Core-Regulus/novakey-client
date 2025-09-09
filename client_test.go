@@ -23,7 +23,7 @@ func generateKey(t *testing.T) string{
 	return pemPriv
 }
 
-func createUser(priv string) (uuid.UUID, error) {	
+func createUser(priv string) (*SetUserResponse, error) {	
 	conf := config.Get()
 	client := NewClient(conf.Endpoint)
 
@@ -36,14 +36,18 @@ func createUser(priv string) (uuid.UUID, error) {
 
 	resp, _, err := client.NewUser(context.Background(), priv, req)
 	if err != nil {
-		return uuid.Nil, err
+		return nil, err
 	}
 	
 	if resp.Status != 200 {
-		return uuid.Nil, fmt.Errorf("expected status ok, got %d", resp.Status)
+		return nil, fmt.Errorf("expected status ok, got %d", resp.Status)
 	}
 
-	return resp.Id, nil
+	if resp.Password == "" {
+		return nil, fmt.Errorf("expected password to be set")
+	}
+
+	return resp, nil
 }
 
 func deleteUser(priv string) (uuid.UUID, error) {
@@ -67,23 +71,66 @@ func deleteUser(priv string) (uuid.UUID, error) {
 	return resp.Id, nil
 }
 
+func deleteUserByPassword(id uuid.UUID, password string) (uuid.UUID, error) {
+	conf := config.Get()
+	client := NewClient(conf.Endpoint)
+
+	req := DeleteUserRequest{
+		Password: password,
+		Id: id,
+		SignedRequest: SignedRequest{},
+	}
+	resp, _, err := client.DeleteUser(context.Background(), "", req)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	
+	if resp.Status != 200 {
+		return uuid.Nil, fmt.Errorf("expected status ok, got %d", resp.Status)
+	}
+
+	return resp.Id, nil
+}
+
 
 func TestNewUser_Success(t *testing.T) {	
 	priv := generateKey(t)
-	id, err := createUser(priv)
+	resp, err := createUser(priv)
 	if err != nil {
 		t.Fatalf("createUser failed: %v", err)
 	}
-	t.Logf("created user id=%s", id)
+	t.Logf("created user id=%s", resp.Id)
 
 	rId, err := deleteUser(priv)
 
-	if rId != id {
+	if rId != resp.Id {
 		t.Fatalf("deleteUser failed: %v", err)
 	}
 
 	if err != nil {
 		t.Fatalf("deleteUser failed: %v", err)
 	}
-	t.Logf("deleted user id=%s", id)
+	t.Logf("deleted user id=%s", resp.Id)
+}
+
+
+func TestDeleteUserByPassword(t *testing.T) {	
+	priv := generateKey(t)
+	resp, err := createUser(priv)
+	if err != nil {
+		t.Fatalf("createUser failed: %v", err)
+	}
+	t.Logf("created user id=%s", resp.Id)
+
+	rId, err := deleteUserByPassword(resp.Id, resp.Password)
+
+	if rId != resp.Id {
+		t.Fatalf("deleteUser failed: %v", err)
+	}
+
+	if err != nil {
+		t.Fatalf("deleteUser failed: %v", err)
+	}
+
+	t.Logf("deleted user id=%s", resp.Id)
 }

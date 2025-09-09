@@ -163,9 +163,6 @@ func (c *Client) DeleteUser (
 		return nil, nil, errors.New("nil client")
 	}
 
-  err := signRequest(&req.SignedRequest, privateKey)
-  if err != nil {
-    return nil, nil, fmt.Errorf("sign request: %w", err)
-  }
+  signRequest(&req.SignedRequest, privateKey)
   return sendRequest[DeleteUserRequest, DeleteUserResponse](c, ctx, req, "/users/delete");
 }
