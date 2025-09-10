@@ -1,107 +1,74 @@
 package novakeyauth
 
 import (
-	"context"
-	"crypto/ed25519"
-	"crypto/rand"
-	"fmt"
+	"novakeyauth/internal-test/keys"
+	"novakeyauth/internal-test/users"	
+	"novakeyauth/internal-test/workspaces"	
 	"novakeyauth/internal/config"
-	"novakeyauth/internal/keys"
 	"testing"
-	"github.com/google/uuid"
 )
 
-func generateKey(t *testing.T) string{
-	_, priv, err := ed25519.GenerateKey(rand.Reader)
+//Workspace tests
+
+func TestSetWorkspace_Success(t *testing.T) {	
+	cfg := config.Get()
+	client := NewClient(cfg.Endpoint)
+	priv := keys.GenerateKey(t)
+	resp, err := workspaces.CreateWorkspace(client, priv)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("createWorkspace failed: %v", err)
 	}
-	pemPriv, err := keys.PrivateKeyToOpenSSHPEM(priv)
+	t.Logf("created workspace id=%s", resp.Id)
+
+	rId, err := workspaces.DeleteWorkspace(client, priv)
+
+	if rId != resp.Id {
+		t.Fatalf("deleteWorkspace failed: %v", err)
+	}
+
 	if err != nil {
-		t.Fatal(err)
-	}	
-	return pemPriv
+		t.Fatalf("deleteWorkspace failed: %v", err)
+	}
+	t.Logf("deleted user id=%s", resp.Id)
 }
 
-func createUser(priv string) (*SetUserResponse, error) {	
-	conf := config.Get()
-	client := NewClient(conf.Endpoint)
 
-	req := SetUserRequest{ 
-		Email: "testuser@test.com",
-		SignedRequest: SignedRequest{
-      Username: "testuser",
-    },
-	}
-
-	resp, _, err := client.NewUser(context.Background(), priv, req)
+func TestDeleteWorkspaceByPassword(t *testing.T) {	
+	cfg := config.Get()
+	client := NewClient(cfg.Endpoint)
+	priv := keys.GenerateKey(t)
+	resp, err := workspaces.CreateWorkspace(client, priv)
 	if err != nil {
-		return nil, err
+		t.Fatalf("createWorkspace failed: %v", err)
 	}
-	
-	if resp.Status != 200 {
-		return nil, fmt.Errorf("expected status ok, got %d", resp.Status)
+	t.Logf("created workspace id=%s", resp.Id)
+
+	rId, err := workspaces.DeleteWorkspaceByPassword(client, resp.Id, resp.Password)
+
+	if rId != resp.Id {
+		t.Fatalf("deleteWorkspace failed: %v", err)
 	}
 
-	if resp.Password == "" {
-		return nil, fmt.Errorf("expected password to be set")
+	if err != nil {
+		t.Fatalf("deleteWorkspace failed: %v", err)
 	}
 
-	return resp, nil
+	t.Logf("deleted workspace id=%s", resp.Id)
 }
 
-func deleteUser(priv string) (uuid.UUID, error) {
-	conf := config.Get()
-	client := NewClient(conf.Endpoint)
-
-	req := DeleteUserRequest{
-		SignedRequest: SignedRequest{
-      Username: "testuser",
-    },
-	}
-	resp, _, err := client.DeleteUser(context.Background(), priv, req)
-	if err != nil {
-		return uuid.Nil, err
-	}
-	
-	if resp.Status != 200 {
-		return uuid.Nil, fmt.Errorf("expected status ok, got %d", resp.Status)
-	}
-
-	return resp.Id, nil
-}
-
-func deleteUserByPassword(id uuid.UUID, password string) (uuid.UUID, error) {
-	conf := config.Get()
-	client := NewClient(conf.Endpoint)
-
-	req := DeleteUserRequest{
-		Password: password,
-		Id: id,
-		SignedRequest: SignedRequest{},
-	}
-	resp, _, err := client.DeleteUser(context.Background(), "", req)
-	if err != nil {
-		return uuid.Nil, err
-	}
-	
-	if resp.Status != 200 {
-		return uuid.Nil, fmt.Errorf("expected status ok, got %d", resp.Status)
-	}
-
-	return resp.Id, nil
-}
-
+//Users Test
 
 func TestNewUser_Success(t *testing.T) {	
-	priv := generateKey(t)
-	resp, err := createUser(priv)
+	cfg := config.Get()
+	client := NewClient(cfg.Endpoint)
+	priv := keys.GenerateKey(t)
+	resp, err := users.CreateUser(client, priv)
 	if err != nil {
 		t.Fatalf("createUser failed: %v", err)
 	}
 	t.Logf("created user id=%s", resp.Id)
 
-	rId, err := deleteUser(priv)
+	rId, err := users.DeleteUser(client, priv)
 
 	if rId != resp.Id {
 		t.Fatalf("deleteUser failed: %v", err)
@@ -115,14 +82,16 @@ func TestNewUser_Success(t *testing.T) {
 
 
 func TestDeleteUserByPassword(t *testing.T) {	
-	priv := generateKey(t)
-	resp, err := createUser(priv)
+	cfg := config.Get()
+	client := NewClient(cfg.Endpoint)
+	priv := keys.GenerateKey(t)
+	resp, err := users.CreateUser(client, priv)
 	if err != nil {
 		t.Fatalf("createUser failed: %v", err)
 	}
 	t.Logf("created user id=%s", resp.Id)
 
-	rId, err := deleteUserByPassword(resp.Id, resp.Password)
+	rId, err := users.DeleteUserByPassword(client, resp.Id, resp.Password)
 
 	if rId != resp.Id {
 		t.Fatalf("deleteUser failed: %v", err)
