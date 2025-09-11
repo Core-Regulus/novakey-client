@@ -12,6 +12,7 @@ import (
 func CreateWorkspace(client *client.Client, priv string) (*workspaces.SetWorkspaceResponse, error) {		
 	req := workspaces.SetWorkspaceRequest{ 
 		Email: "testuser@test.com",
+		Name: "testWorkspace",
 		SignedRequest: signedrequest.SignedRequest{},
 	}
 
@@ -21,7 +22,7 @@ func CreateWorkspace(client *client.Client, priv string) (*workspaces.SetWorkspa
 	}
 	
 	if resp.Status != 200 {
-		return nil, fmt.Errorf("expected status ok, got %d", resp.Status)
+		return nil, fmt.Errorf("expected status ok, got %d %s", resp.Status, resp.ErrorDescription)
 	}
 
 	if resp.Password == "" {
@@ -33,9 +34,7 @@ func CreateWorkspace(client *client.Client, priv string) (*workspaces.SetWorkspa
 
 func DeleteWorkspace(client *client.Client, priv string) (uuid.UUID, error) {	
 	req := workspaces.DeleteWorkspaceRequest{
-		SignedRequest: signedrequest.SignedRequest{
-      Username: "testuser",
-    },
+		SignedRequest: signedrequest.SignedRequest{},
 	}
 	resp, _, err := client.DeleteWorkspace(context.Background(), priv, req)
 	if err != nil {
@@ -43,7 +42,7 @@ func DeleteWorkspace(client *client.Client, priv string) (uuid.UUID, error) {
 	}
 	
 	if resp.Status != 200 {
-		return uuid.Nil, fmt.Errorf("expected status ok, got %d", resp.Status)
+		return uuid.Nil, fmt.Errorf("expected status ok, got %d %s", resp.Status, resp.ErrorDescription)
 	}
 
 	return resp.Id, nil
@@ -61,7 +60,7 @@ func DeleteWorkspaceByPassword(client *client.Client, id uuid.UUID, password str
 	}
 	
 	if resp.Status != 200 {
-		return uuid.Nil, fmt.Errorf("expected status ok, got %d", resp.Status)
+		return uuid.Nil, fmt.Errorf("expected status ok, got %d %s", resp.Status, resp.ErrorDescription)
 	}
 
 	return resp.Id, nil

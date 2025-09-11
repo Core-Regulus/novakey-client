@@ -23,7 +23,7 @@ func CreateUser(client *client.Client, priv string) (*users.SetUserResponse, err
 	}
 	
 	if resp.Status != 200 {
-		return nil, fmt.Errorf("expected status ok, got %d", resp.Status)
+		return nil, fmt.Errorf("expected status ok, got %d, %s", resp.Status, resp.ErrorDescription)
 	}
 
 	if resp.Password == "" {

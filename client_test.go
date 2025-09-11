@@ -41,7 +41,7 @@ func TestDeleteWorkspaceByPassword(t *testing.T) {
 	if err != nil {
 		t.Fatalf("createWorkspace failed: %v", err)
 	}
-	t.Logf("created workspace id=%s", resp.Id)
+	t.Logf("created workspace id=%s password=%s", resp.Id, resp.Password)
 
 	rId, err := workspaces.DeleteWorkspaceByPassword(client, resp.Id, resp.Password)
 

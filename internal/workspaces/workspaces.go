@@ -9,6 +9,7 @@ type SetWorkspaceRequest struct {
 	signedrequest.SignedRequest
   Id        string  `json:"id,omitempty"`
   Email     string  `json:"email"`
+	Name     string   `json:"name"`
 }
 
 type DeleteWorkspaceRequest struct {
@@ -19,12 +20,18 @@ type DeleteWorkspaceRequest struct {
 
 type SetWorkspaceResponse struct {
 	Id uuid.UUID      `json:"id"`
-	Name string   		`json:"name"`
-  Password string   `json:"password"`
+	Name string   		`json:"name"`  
+	Password string   `json:"password"`
   Status int        `json:"status"`
+	Error string	 	  `json:"error,omitempty"`
+	Code string	 			`json:"code,omitempty"`
+	ErrorDescription string `json:"errorDescription,omitempty"`
 }
 
 type DeleteWorkspaceResponse struct {
 	Id uuid.UUID      `json:"id"`	
   Status int        `json:"status"`
+	Error string	 	  `json:"error,omitempty"`
+	Code string	 			`json:"code,omitempty"`
+	ErrorDescription string `json:"errorDescription,omitempty"`
 }
