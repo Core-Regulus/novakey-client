@@ -11,9 +11,8 @@ import (
 
 func CreateWorkspace(client *client.Client, priv string) (*workspaces.SetWorkspaceResponse, error) {		
 	req := workspaces.SetWorkspaceRequest{ 
-		Email: "testuser@test.com",
 		Name: "testWorkspace",
-		SignedRequest: signedrequest.SignedRequest{},
+		User: signedrequest.SignedRequest{},
 	}
 
 	resp, _, err := client.NewWorkspace(context.Background(), priv, req)
@@ -21,20 +20,17 @@ func CreateWorkspace(client *client.Client, priv string) (*workspaces.SetWorkspa
 		return nil, err
 	}
 	
-	if resp.Status != 200 {
-		return nil, fmt.Errorf("expected status ok, got %d %s", resp.Status, resp.ErrorDescription)
-	}
-
-	if resp.Password == "" {
-		return nil, fmt.Errorf("expected password to be set")
+	if resp.Status != 200 {		
+		return nil, fmt.Errorf("%s", signedrequest.FormatErrorResponse(resp.ErrorResponse))
 	}
 
 	return resp, nil
 }
 
-func DeleteWorkspace(client *client.Client, priv string) (uuid.UUID, error) {	
+func DeleteWorkspace(client *client.Client, id uuid.UUID, priv string) (uuid.UUID, error) {	
 	req := workspaces.DeleteWorkspaceRequest{
-		SignedRequest: signedrequest.SignedRequest{},
+		Id: id,
+		User: signedrequest.SignedRequest{},
 	}
 	resp, _, err := client.DeleteWorkspace(context.Background(), priv, req)
 	if err != nil {
@@ -42,17 +38,19 @@ func DeleteWorkspace(client *client.Client, priv string) (uuid.UUID, error) {
 	}
 	
 	if resp.Status != 200 {
-		return uuid.Nil, fmt.Errorf("expected status ok, got %d %s", resp.Status, resp.ErrorDescription)
+		return uuid.Nil, fmt.Errorf("%s", signedrequest.FormatErrorResponse(resp.ErrorResponse))
 	}
 
 	return resp.Id, nil
 }
 
-func DeleteWorkspaceByPassword(client *client.Client, id uuid.UUID, password string) (uuid.UUID, error) {
-	req := workspaces.DeleteWorkspaceRequest{
-		Password: password,
+func DeleteWorkspaceByPassword(client *client.Client, id uuid.UUID, userId uuid.UUID, password string) (uuid.UUID, error) {
+	req := workspaces.DeleteWorkspaceRequest{		
 		Id: id,
-		SignedRequest: signedrequest.SignedRequest{},
+		User: signedrequest.SignedRequest{
+			Id: userId,
+			Password: password,
+		},
 	}
 	resp, _, err := client.DeleteWorkspace(context.Background(), "", req)
 	if err != nil {
@@ -60,7 +58,7 @@ func DeleteWorkspaceByPassword(client *client.Client, id uuid.UUID, password str
 	}
 	
 	if resp.Status != 200 {
-		return uuid.Nil, fmt.Errorf("expected status ok, got %d %s", resp.Status, resp.ErrorDescription)
+		return uuid.Nil, fmt.Errorf("%s", signedrequest.FormatErrorResponse(resp.ErrorResponse))
 	}
 
 	return resp.Id, nil

@@ -138,12 +138,12 @@ func (c *Client) NewWorkspace (
 		return nil, nil, errors.New("nil client")
 	}
 
-  sign(&req.SignedRequest, privateKey)  
+  sign(&req.User, privateKey)  
 	return send[workspaces.SetWorkspaceRequest, workspaces.SetWorkspaceResponse](c, ctx, req, "/workspaces/set");
 }
 
 func (c *Client) DeleteWorkspace (
-	ctx context.Context,
+	ctx context.Context,	
 	privateKey string,
 	req workspaces.DeleteWorkspaceRequest,
 ) (*workspaces.DeleteWorkspaceResponse, *http.Response, error) {
@@ -152,6 +152,6 @@ func (c *Client) DeleteWorkspace (
 		return nil, nil, errors.New("nil client")
 	}
 
-  sign(&req.SignedRequest, privateKey)
+  sign(&req.User, privateKey)
   return send[workspaces.DeleteWorkspaceRequest, workspaces.DeleteWorkspaceResponse](c, ctx, req, "/workspaces/delete");
 }

@@ -5,33 +5,25 @@ import (
 	"github.com/google/uuid"
 )
 
-type SetWorkspaceRequest struct {
-	signedrequest.SignedRequest
-  Id        string  `json:"id,omitempty"`
-  Email     string  `json:"email"`
-	Name     string   `json:"name"`
+type SetWorkspaceRequest struct {	
+  Id       uuid.UUID 		 `json:"id,omitempty"`  
+	Name     string  			 `json:"name"`
+	User 		 signedrequest.SignedRequest `json:"user"`
 }
 
 type DeleteWorkspaceRequest struct {
-	signedrequest.SignedRequest
-  Id  uuid.UUID      `json:"id"`
-  Password  string  `json:"password,omitempty"` 
+	Id  		uuid.UUID      `json:"id"`
+	User 		signedrequest.SignedRequest `json:"user"`
 }
 
 type SetWorkspaceResponse struct {
-	Id uuid.UUID      `json:"id"`
-	Name string   		`json:"name"`  
-	Password string   `json:"password"`
-  Status int        `json:"status"`
-	Error string	 	  `json:"error,omitempty"`
-	Code string	 			`json:"code,omitempty"`
-	ErrorDescription string `json:"errorDescription,omitempty"`
+	Id 				uuid.UUID   `json:"id"`
+	Name 			string   		`json:"name"`  
+	Password 	string   		`json:"password"`
+  signedrequest.ErrorResponse
 }
 
 type DeleteWorkspaceResponse struct {
 	Id uuid.UUID      `json:"id"`	
-  Status int        `json:"status"`
-	Error string	 	  `json:"error,omitempty"`
-	Code string	 			`json:"code,omitempty"`
-	ErrorDescription string `json:"errorDescription,omitempty"`
+  signedrequest.ErrorResponse	
 }

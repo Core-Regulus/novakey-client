@@ -3,13 +3,17 @@ package users
 import (
 	"context"
 	"fmt"
+	"novakeyauth/internal-test/keys"
+	"novakeyauth/internal/client"
 	"novakeyauth/internal/signedRequest"
 	"novakeyauth/internal/users"
-	"novakeyauth/internal/client"
+	"testing"
 	"github.com/google/uuid"
 )
 
-func CreateUser(client *client.Client, priv string) (*users.SetUserResponse, error) {		
+func CreateUser(t *testing.T, client *client.Client) (*users.SetUserResponse, string, error) {		
+	priv := keys.GenerateKey(t)
+	
 	req := users.SetUserRequest{ 
 		Email: "testuser@test.com",
 		SignedRequest: signedrequest.SignedRequest{
@@ -19,18 +23,18 @@ func CreateUser(client *client.Client, priv string) (*users.SetUserResponse, err
 
 	resp, _, err := client.NewUser(context.Background(), priv, req)
 	if err != nil {
-		return nil, err
+		t.Fatal(err)		
 	}
 	
 	if resp.Status != 200 {
-		return nil, fmt.Errorf("expected status ok, got %d, %s", resp.Status, resp.ErrorDescription)
+		t.Fatal(signedrequest.FormatErrorResponse(resp.ErrorResponse));
 	}
 
 	if resp.Password == "" {
-		return nil, fmt.Errorf("expected password to be set")
+		t.Fatal(fmt.Errorf("expected password to be set"))
 	}
 
-	return resp, nil
+	return resp, priv, nil
 }
 
 func DeleteUser(client *client.Client, priv string) (uuid.UUID, error) {	
@@ -45,7 +49,7 @@ func DeleteUser(client *client.Client, priv string) (uuid.UUID, error) {
 	}
 	
 	if resp.Status != 200 {
-		return uuid.Nil, fmt.Errorf("expected status ok, got %d", resp.Status)
+		return uuid.Nil, fmt.Errorf("%s", signedrequest.FormatErrorResponse(resp.ErrorResponse))
 	}
 
 	return resp.Id, nil
@@ -63,7 +67,7 @@ func DeleteUserByPassword(client *client.Client, id uuid.UUID, password string) 
 	}
 	
 	if resp.Status != 200 {
-		return uuid.Nil, fmt.Errorf("expected status ok, got %d", resp.Status)
+		return uuid.Nil, fmt.Errorf("%s", signedrequest.FormatErrorResponse(resp.ErrorResponse))
 	}
 
 	return resp.Id, nil

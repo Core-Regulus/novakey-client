@@ -1,7 +1,6 @@
 package novakeyauth
 
-import (
-	"novakeyauth/internal-test/keys"
+import (	
 	"novakeyauth/internal-test/users"	
 	"novakeyauth/internal-test/workspaces"	
 	"novakeyauth/internal/config"
@@ -9,18 +8,17 @@ import (
 )
 
 //Workspace tests
-
 func TestSetWorkspace_Success(t *testing.T) {	
 	cfg := config.Get()
 	client := NewClient(cfg.Endpoint)
-	priv := keys.GenerateKey(t)
+	_ , priv, _ := users.CreateUser(t, client)
 	resp, err := workspaces.CreateWorkspace(client, priv)
 	if err != nil {
 		t.Fatalf("createWorkspace failed: %v", err)
 	}
 	t.Logf("created workspace id=%s", resp.Id)
 
-	rId, err := workspaces.DeleteWorkspace(client, priv)
+	rId, err := workspaces.DeleteWorkspace(client, resp.Id, priv)
 
 	if rId != resp.Id {
 		t.Fatalf("deleteWorkspace failed: %v", err)
@@ -29,21 +27,21 @@ func TestSetWorkspace_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("deleteWorkspace failed: %v", err)
 	}
-	t.Logf("deleted user id=%s", resp.Id)
+	t.Logf("deleted workspace id=%s", resp.Id)
 }
 
 
 func TestDeleteWorkspaceByPassword(t *testing.T) {	
 	cfg := config.Get()
 	client := NewClient(cfg.Endpoint)
-	priv := keys.GenerateKey(t)
+	userResp , priv, _ := users.CreateUser(t, client)
 	resp, err := workspaces.CreateWorkspace(client, priv)
 	if err != nil {
 		t.Fatalf("createWorkspace failed: %v", err)
 	}
-	t.Logf("created workspace id=%s password=%s", resp.Id, resp.Password)
+	t.Logf("created workspace id=%s", resp.Id)
 
-	rId, err := workspaces.DeleteWorkspaceByPassword(client, resp.Id, resp.Password)
+	rId, err := workspaces.DeleteWorkspaceByPassword(client, resp.Id, userResp.Id, userResp.Password)
 
 	if rId != resp.Id {
 		t.Fatalf("deleteWorkspace failed: %v", err)
@@ -60,9 +58,8 @@ func TestDeleteWorkspaceByPassword(t *testing.T) {
 
 func TestNewUser_Success(t *testing.T) {	
 	cfg := config.Get()
-	client := NewClient(cfg.Endpoint)
-	priv := keys.GenerateKey(t)
-	resp, err := users.CreateUser(client, priv)
+	client := NewClient(cfg.Endpoint)	
+	resp, priv, err := users.CreateUser(t, client)
 	if err != nil {
 		t.Fatalf("createUser failed: %v", err)
 	}
@@ -83,9 +80,8 @@ func TestNewUser_Success(t *testing.T) {
 
 func TestDeleteUserByPassword(t *testing.T) {	
 	cfg := config.Get()
-	client := NewClient(cfg.Endpoint)
-	priv := keys.GenerateKey(t)
-	resp, err := users.CreateUser(client, priv)
+	client := NewClient(cfg.Endpoint)	
+	resp, _, err := users.CreateUser(t, client)
 	if err != nil {
 		t.Fatalf("createUser failed: %v", err)
 	}
