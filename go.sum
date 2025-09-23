@@ -1,3 +1,15 @@
+github.com/core-regulus/novakey-types-go v0.0.1 h1:oLBKIARvMqxGsf1ue6NI9Sg0HUUfu8jT539BxALhNhQ=
+github.com/core-regulus/novakey-types-go v0.0.1/go.mod h1:Q9oaPLxA4XmmopQw0WxzZPMLoKr9YEBOrcoWcz2UCqs=
+github.com/core-regulus/novakey-types-go v0.0.2 h1:tB3MuV0jBG3g1wisnH1jLEODREFrgUYP4Mrj5/HCXck=
+github.com/core-regulus/novakey-types-go v0.0.2/go.mod h1:Q9oaPLxA4XmmopQw0WxzZPMLoKr9YEBOrcoWcz2UCqs=
+github.com/core-regulus/novakey-types-go v0.0.3 h1:yWe1vZ75i6pVOkxx5WH2YFGF32a8eBb4AFi62w7/obk=
+github.com/core-regulus/novakey-types-go v0.0.3/go.mod h1:Q9oaPLxA4XmmopQw0WxzZPMLoKr9YEBOrcoWcz2UCqs=
+github.com/core-regulus/novakey-types-go v0.0.4 h1:mHEPILfUN0rB/o3Z3d403mzAV/YOAkX0x2jenMZWKvg=
+github.com/core-regulus/novakey-types-go v0.0.4/go.mod h1:Q9oaPLxA4XmmopQw0WxzZPMLoKr9YEBOrcoWcz2UCqs=
+github.com/core-regulus/novakey-types-go v0.0.5 h1:tSb+WLLA90QBEKg6nYHlIxvsP4NaH0WTuHZgZq/0tJc=
+github.com/core-regulus/novakey-types-go v0.0.5/go.mod h1:Q9oaPLxA4XmmopQw0WxzZPMLoKr9YEBOrcoWcz2UCqs=
+github.com/core-regulus/novakey-types-go v0.0.6 h1:jQ/tSfnn3YllOR+8aM2u7XBqtr01IFqAMkCse4mnUcI=
+github.com/core-regulus/novakey-types-go v0.0.6/go.mod h1:Q9oaPLxA4XmmopQw0WxzZPMLoKr9YEBOrcoWcz2UCqs=
 github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
 github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 golang.org/x/crypto v0.41.0 h1:WKYxWedPGCTVVl5+WHSSrOBT0O8lx32+zxmHxijgXp4=

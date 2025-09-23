@@ -6,7 +6,7 @@
       "type": "go",
       "request": "launch",
       "mode": "test",
-      "program": "${workspaceFolder}"
+      "program": "${workspaceFolder}/test"
     },
     {
       "name": "Debug Single Test File",

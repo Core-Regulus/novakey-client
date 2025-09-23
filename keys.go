@@ -1,4 +1,5 @@
-package keys
+
+package novakeyclient
 
 import (
 	"bytes"
@@ -163,4 +164,16 @@ func PrivateKeyToOpenSSHPEM(priv ed25519.PrivateKey) (string, error) {
 	pemResult.WriteString("-----END OPENSSH PRIVATE KEY-----\n")
 
 	return pemResult.String(), nil
+}
+
+func GenerateKey() (string, error) {
+	_, priv, err := ed25519.GenerateKey(rand.Reader)
+	if err != nil {
+		return "", err
+	}
+	pemPriv, err := PrivateKeyToOpenSSHPEM(priv)
+	if err != nil {
+		return "", err
+	}	
+	return pemPriv, nil
 }

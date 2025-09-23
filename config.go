@@ -1,4 +1,4 @@
-package config
+package novakeyclient
 
 import (
 	"os"
@@ -13,11 +13,11 @@ var cfg Config
 var once sync.Once
 
 func loadConfig() {
-	//cfg.Endpoint = getEnv("NOVAKEY_ENDPOINT", "https://novakey-api.core-regulus.com")
-	cfg.Endpoint = getEnv("NOVAKEY_ENDPOINT", "http://localhost:5000")
+	cfg.Endpoint = getEnv("NOVAKEY_ENDPOINT", "https://novakey-api.core-regulus.com")
+	//cfg.Endpoint = getEnv("NOVAKEY_ENDPOINT", "http://localhost:5000")
 }
 
-func Get() *Config {
+func GetConfig() *Config {
 	once.Do(func() {
 		loadConfig()
 	})
