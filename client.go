@@ -9,9 +9,11 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"github.com/core-regulus/novakey-types-go"
 	"strings"
 	"time"
+
+	"github.com/core-regulus/novakey-types-go"
+	"github.com/google/uuid"
 )
 
 type Client struct {
@@ -181,4 +183,19 @@ func (c *Client) DeleteProject (
 
 	sign(&req.Signer, privateKey)
 	return send[novakeytypes.DeleteProjectRequest, novakeytypes.DeleteProjectResponse](c, ctx, req, "/projects/delete");
+}
+
+func (c *Client) GetProject (
+	ctx context.Context,
+	projectId uuid.UUID,
+	privateKey string,	
+	req novakeytypes.GetProjectRequest,
+) (*novakeytypes.GetProjectResponse, *http.Response, error) {
+
+	if c == nil {
+		return nil, nil, errors.New("nil client")
+	}
+
+  sign(&req.Signer, privateKey)  
+	return send[novakeytypes.GetProjectRequest, novakeytypes.GetProjectResponse](c, ctx, req, "/projects/get");
 }

@@ -33,6 +33,19 @@ func TestSetWorkspace_Success(t *testing.T) {
 	}
 	t.Logf("created project id=%s", projectResp.Id)
 
+	keysResp, err := GetProject(
+		client, projectResp.Id, 
+		priv,
+	)
+	if err != nil {
+		t.Fatalf("User1 getKeys failed: %v", err)
+	}
+	
+	tKey := keysResp.Keys[0]
+	if (tKey.Key != "TestKey") || (tKey.Value != "TestValue") {
+		t.Fatalf("Key error received %s - %s", tKey.Key, tKey.Value)
+	}
+		
 	_ , priv2, _ := CreateUser(t, client, priv,
 		[]novakeytypes.Workspace{
     	{Id: workspaceResp.Id, RoleCode: "root.workspace.admin" },
@@ -41,7 +54,18 @@ func TestSetWorkspace_Success(t *testing.T) {
     	{Id: projectResp.Id, RoleCode: "root.workspace.project.admin" },
 		})
 
+	keysResp2, err := GetProject(
+		client, projectResp.Id, 
+		priv2,
+	)
+	if err != nil {
+		t.Fatalf("User2 getKeys failed: %v", err)
+	}
 	
+	tKey2 := keysResp2.Keys[0]
+	if (tKey2.Key != "TestKey") || (tKey2.Value != "TestValue") {
+		t.Fatalf("Key error received %s - %s", tKey2.Key, tKey2.Value)
+	}
 
 	defer func() {
 		pId, err := DeleteProject(client, projectResp.Id, priv)

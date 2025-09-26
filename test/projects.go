@@ -50,3 +50,24 @@ func DeleteProject(client *novakeyclient.Client, id uuid.UUID, priv string) (uui
 
 	return resp.Id, nil
 }
+
+func GetProject(
+	client *novakeyclient.Client, 
+	Id uuid.UUID, 
+	priv string) (*novakeytypes.GetProjectResponse, error) {		
+	req := novakeytypes.GetProjectRequest{ 
+		Id: Id,
+		Signer: novakeytypes.AuthEntity{},
+	}
+
+	resp, _, err := client.GetProject(context.Background(), Id, priv, req)
+	if err != nil {
+		return nil, err
+	}
+	
+	if resp.Status != 200 {		
+		return nil, fmt.Errorf("%s", novakeytypes.FormatErrorResponse(resp.ErrorResponse))
+	}
+
+	return resp, nil
+}
