@@ -1,33 +1,27 @@
 package novakeyclient
 
 import (
-	"os"
-	"sync"	
+	novakeytypes "github.com/core-regulus/novakey-types-go"	
 )
 
-type Config struct {
-	Endpoint string
+type InitConfig struct {
+	Directory string
 }
 
-var cfg Config
-var once sync.Once
-
-func loadConfig() {
-	cfg.Endpoint = getEnv("NOVAKEY_ENDPOINT", "https://novakey-api.core-regulus.com")
-	//cfg.Endpoint = getEnv("NOVAKEY_ENDPOINT", "http://localhost:5000")
+type LaunchConfig struct {
+	Backend 	BakendConfig   					`yaml:"backend"`
+	Workspace novakeytypes.Workspace 	`yaml:"workspace"`	
+	Signer  	novakeytypes.Signer			`yaml:"-"`
 }
 
-func GetConfig() *Config {
-	once.Do(func() {
-		loadConfig()
-	})
-	return &cfg
+type UserConfig struct {
+	Email 					string	`yaml:"email"`	
+	PrivateKeyFile 	string  `yaml:"privateKeyFile"`
 }
 
-func getEnv(key string, def string) string {
-	val := os.Getenv(key)
-	if val == "" {
-		return def
-	}
-	return val
+type BakendConfig struct {
+	Endpoint    string  		`yaml:"endpoint"`	
 }
+
+
+

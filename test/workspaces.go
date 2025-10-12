@@ -15,16 +15,13 @@ func CreateWorkspace(client *novakeyclient.Client, priv string) (*novakeytypes.S
 		Signer: novakeytypes.AuthEntity{},
 	}
 
-	resp, _, err := client.NewWorkspace(context.Background(), priv, req)
-	if err != nil {
-		return nil, err
-	}
+	resp := client.SetWorkspace(context.Background(), priv, req)
 	
 	if resp.Status != 200 {		
-		return nil, fmt.Errorf("%s", novakeytypes.FormatErrorResponse(resp.ErrorResponse))
+		return nil, fmt.Errorf("%s", novakeytypes.FormatErrorResponse(resp.Error))
 	}
 
-	return resp, nil
+	return &resp, nil
 }
 
 func DeleteWorkspace(client *novakeyclient.Client, id uuid.UUID, priv string) (uuid.UUID, error) {	
@@ -32,13 +29,9 @@ func DeleteWorkspace(client *novakeyclient.Client, id uuid.UUID, priv string) (u
 		Id: id,
 		Signer: novakeytypes.AuthEntity{},
 	}
-	resp, _, err := client.DeleteWorkspace(context.Background(), priv, req)
-	if err != nil {
-		return uuid.Nil, err
-	}
-	
+	resp := client.DeleteWorkspace(context.Background(), priv, req)
 	if resp.Status != 200 {
-		return uuid.Nil, fmt.Errorf("%s", novakeytypes.FormatErrorResponse(resp.ErrorResponse))
+		return uuid.Nil, fmt.Errorf("%s", novakeytypes.FormatErrorResponse(resp.Error))
 	}
 
 	return resp.Id, nil
@@ -52,13 +45,9 @@ func DeleteWorkspaceByPassword(client *novakeyclient.Client, id uuid.UUID, userI
 			Password: password,
 		},
 	}
-	resp, _, err := client.DeleteWorkspace(context.Background(), "", req)
-	if err != nil {
-		return uuid.Nil, err
-	}
-	
+	resp := client.DeleteWorkspace(context.Background(), "", req)
 	if resp.Status != 200 {
-		return uuid.Nil, fmt.Errorf("%s", novakeytypes.FormatErrorResponse(resp.ErrorResponse))
+		return uuid.Nil, fmt.Errorf("%s", novakeytypes.FormatErrorResponse(resp.Error))
 	}
 
 	return resp.Id, nil

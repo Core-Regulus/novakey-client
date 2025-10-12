@@ -1,0 +1,11 @@
+backend:
+  endpoint: https://novakey-api.core-regulus.com
+workspace:
+  name: Test Workspace
+  project:
+    name: Test Project
+    description: This is a project for automated tests
+    keys:
+      - name: test value
+        value: test key
+      

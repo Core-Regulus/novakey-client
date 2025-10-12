@@ -4,8 +4,7 @@ import (
 	"context"
 	cryptoRand "crypto/rand"
 	"encoding/base64"
-	"encoding/json"
-	"errors"
+	"encoding/json"	
 	"fmt"
 	"io"
 	"net/http"
@@ -93,96 +92,180 @@ func send[Request any, Response any](c *Client, ctx context.Context, req Request
 
 	var parsed Response
 	_ = json.Unmarshal(respBytes, &parsed)	
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+	if resp.StatusCode < 200 || resp.StatusCode >= 400 {
 		return &parsed, resp, fmt.Errorf("unexpected status %d: %s", resp.StatusCode, strings.TrimSpace(string(respBytes)))
 	}
   return &parsed, resp, nil
 }
 
-func (c *Client) NewUser (
+func (c *Client) SetUser (
 	ctx context.Context,
 	privateKey string,
 	signerKey string,
 	req novakeytypes.SetUserRequest,
-) (*novakeytypes.SetUserResponse, *http.Response, error) {
+) (novakeytypes.SetUserResponse) {
 
 	if c == nil {
-		return nil, nil, errors.New("nil client")
+		return novakeytypes.SetUserResponse{
+			Error: novakeytypes.Error{
+				Status:  0,
+				Error:   "nil client",				
+			},
+		}		
 	}
 
   sign(&req.AuthEntity, privateKey)
 	sign(&req.Signer, signerKey)
-	return send[novakeytypes.SetUserRequest, novakeytypes.SetUserResponse](c, ctx, req, "/users/set");
+	uResp, resp, err := send[novakeytypes.SetUserRequest, novakeytypes.SetUserResponse](c, ctx, req, "/users/set");
+	if (err != nil) {
+		return novakeytypes.SetUserResponse{
+			Error: novakeytypes.Error{
+				Status:  resp.StatusCode,
+				Error:   err.Error(),				
+			},
+		}		
+	}
+	return *uResp
 }
 
 func (c *Client) DeleteUser (
 	ctx context.Context,
 	privateKey string,
 	req novakeytypes.DeleteUserRequest,
-) (*novakeytypes.DeleteUserResponse, *http.Response, error) {
+) (novakeytypes.DeleteUserResponse) {
 
 	if c == nil {
-		return nil, nil, errors.New("nil client")
+		return novakeytypes.DeleteUserResponse{
+			Error: novakeytypes.Error{
+				Status:  0,
+				Error:   "nil client",				
+			},
+		}		
 	}
 
   sign(&req.AuthEntity, privateKey)
-  return send[novakeytypes.DeleteUserRequest, novakeytypes.DeleteUserResponse](c, ctx, req, "/users/delete");
+  uResp, resp, err := send[novakeytypes.DeleteUserRequest, novakeytypes.DeleteUserResponse](c, ctx, req, "/users/delete");
+	if (err != nil) {
+		return novakeytypes.DeleteUserResponse{
+			Error: novakeytypes.Error{
+				Status:  resp.StatusCode,
+				Error:   err.Error(),				
+			},
+		}		
+	}
+	return *uResp
 }
 
-func (c *Client) NewWorkspace (
+func (c *Client) SetWorkspace (
 	ctx context.Context,
 	privateKey string,
 	req novakeytypes.SetWorkspaceRequest,
-) (*novakeytypes.SetWorkspaceResponse, *http.Response, error) {
+) (novakeytypes.SetWorkspaceResponse) {
 
 	if c == nil {
-		return nil, nil, errors.New("nil client")
+		return novakeytypes.SetWorkspaceResponse{
+			Error: novakeytypes.Error{
+				Status:  0,
+				Error:   "nil client",				
+			},
+		}		
 	}
 
   sign(&req.Signer, privateKey)  
-	return send[novakeytypes.SetWorkspaceRequest, novakeytypes.SetWorkspaceResponse](c, ctx, req, "/workspaces/set");
+	uResp, resp, err := send[novakeytypes.SetWorkspaceRequest, novakeytypes.SetWorkspaceResponse](c, ctx, req, "/workspaces/set");
+	if (err != nil) {
+		return novakeytypes.SetWorkspaceResponse{
+			Error: novakeytypes.Error{
+				Status:  resp.StatusCode,
+				Error:   err.Error(),				
+			},
+		}		
+	}
+	return *uResp
 }
 
 func (c *Client) DeleteWorkspace (
 	ctx context.Context,	
 	privateKey string,
 	req novakeytypes.DeleteWorkspaceRequest,
-) (*novakeytypes.DeleteWorkspaceResponse, *http.Response, error) {
+) (novakeytypes.DeleteWorkspaceResponse) {
 
 	if c == nil {
-		return nil, nil, errors.New("nil client")
+		return novakeytypes.DeleteWorkspaceResponse{
+			Error: novakeytypes.Error{
+				Status:  0,
+				Error:   "nil client",				
+			},
+		}		
 	}
 
   sign(&req.Signer, privateKey)
-  return send[novakeytypes.DeleteWorkspaceRequest, novakeytypes.DeleteWorkspaceResponse](c, ctx, req, "/workspaces/delete");
+  uResp, resp, err := send[novakeytypes.DeleteWorkspaceRequest, novakeytypes.DeleteWorkspaceResponse](c, ctx, req, "/workspaces/delete");
+	if (err != nil) {
+		return novakeytypes.DeleteWorkspaceResponse{
+			Error: novakeytypes.Error{
+				Status:  resp.StatusCode,
+				Error:   err.Error(),				
+			},
+		}		
+	}
+	return *uResp
 }
 
-func (c *Client) NewProject (
+func (c *Client) SetProject (
 	ctx context.Context,
 	privateKey string,	
 	req novakeytypes.SetProjectRequest,
-) (*novakeytypes.SetProjectResponse, *http.Response, error) {
+) (novakeytypes.SetProjectResponse) {
 
 	if c == nil {
-		return nil, nil, errors.New("nil client")
+		return novakeytypes.SetProjectResponse{
+			Error: novakeytypes.Error{
+				Status:  0,
+				Error:   "nil client",				
+			},
+		}		
 	}
 
   sign(&req.Signer, privateKey)  
-	return send[novakeytypes.SetProjectRequest, novakeytypes.SetProjectResponse](c, ctx, req, "/projects/set");
+	uResp, resp, err := send[novakeytypes.SetProjectRequest, novakeytypes.SetProjectResponse](c, ctx, req, "/projects/set");
+	if (err != nil) {
+		return novakeytypes.SetProjectResponse{
+			Error: novakeytypes.Error{
+				Status:  resp.StatusCode,
+				Error:   err.Error(),				
+			},
+		}		
+	}
+	return *uResp
 }
 
 func (c *Client) DeleteProject (
 	ctx context.Context,	
 	privateKey string,
 	req novakeytypes.DeleteProjectRequest,
-) (*novakeytypes.DeleteProjectResponse, *http.Response, error) {
+) (novakeytypes.DeleteProjectResponse) {
 
 	if c == nil {
-		return nil, nil, errors.New("nil client")
+		return novakeytypes.DeleteProjectResponse{
+			Error: novakeytypes.Error{
+				Status:  0,
+				Error:   "nil client",				
+			},
+		}		
 	}
 
 	sign(&req.Signer, privateKey)
-	return send[novakeytypes.DeleteProjectRequest, novakeytypes.DeleteProjectResponse](c, ctx, req, "/projects/delete");
+	uResp, resp, err := send[novakeytypes.DeleteProjectRequest, novakeytypes.DeleteProjectResponse](c, ctx, req, "/projects/delete");
+	if (err != nil) {
+		return novakeytypes.DeleteProjectResponse{
+			Error: novakeytypes.Error{
+				Status:  resp.StatusCode,
+				Error:   err.Error(),				
+			},
+		}		
+	}
+	return *uResp
 }
 
 func (c *Client) GetProject (
@@ -190,12 +273,26 @@ func (c *Client) GetProject (
 	projectId uuid.UUID,
 	privateKey string,	
 	req novakeytypes.GetProjectRequest,
-) (*novakeytypes.GetProjectResponse, *http.Response, error) {
+) (novakeytypes.GetProjectResponse) {
 
 	if c == nil {
-		return nil, nil, errors.New("nil client")
+		return novakeytypes.GetProjectResponse{
+			Error: novakeytypes.Error{
+				Status:  0,
+				Error:   "nil client",				
+			},
+		}		
 	}
 
   sign(&req.Signer, privateKey)  
-	return send[novakeytypes.GetProjectRequest, novakeytypes.GetProjectResponse](c, ctx, req, "/projects/get");
+	uResp, resp, err := send[novakeytypes.GetProjectRequest, novakeytypes.GetProjectResponse](c, ctx, req, "/projects/get");
+	if (err != nil) {
+		return novakeytypes.GetProjectResponse{
+			Error: novakeytypes.Error{
+				Status:  resp.StatusCode,
+				Error:   err.Error(),				
+			},
+		}		
+	}
+	return *uResp
 }

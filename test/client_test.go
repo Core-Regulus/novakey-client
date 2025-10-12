@@ -6,15 +6,23 @@ import (
 	"github.com/core-regulus/novakey-types-go"
 )
 
+/*var launchCfg = novakeyclient.LaunchConfig{
+	Backend: novakeyclient.BakendConfig{
+		Endpoint: "http://localhost:5000",
+	},
+}*/
+
+var launchCfg = novakeyclient.LaunchConfig{
+	Backend: novakeyclient.BakendConfig{
+		Endpoint: "https://novakey-api.core-regulus.com",
+	},
+}
+
+
 //Workspace tests
 func TestSetWorkspace_Success(t *testing.T) {		
-	client := novakeyclient.NewClient()
-	_ , priv, _ := CreateUser(t, client, "", []novakeytypes.Workspace{}, []novakeytypes.Project{})
-	defer func() {
-		if _, err := DeleteUser(client, priv); err != nil {
-			t.Logf("failed to delete user1 in cleanup: %v", err)
-		}
-	}()
+	client := novakeyclient.NewClientFromLaunchConfig(launchCfg)
+	_ , priv, _ := CreateUser(t, client, "", []novakeytypes.Workspace{}, []novakeytypes.Project{}, "")
 	workspaceResp, err := CreateWorkspace(client, priv)
 	if err != nil {
 		t.Fatalf("createWorkspace failed: %v", err)
@@ -51,8 +59,13 @@ func TestSetWorkspace_Success(t *testing.T) {
     	{Id: workspaceResp.Id, RoleCode: "root.workspace.admin" },
 		},
 		[]novakeytypes.Project{
-    	{Id: projectResp.Id, RoleCode: "root.workspace.project.admin" },
-		})
+		{
+				Id: projectResp.Id, 
+				RoleCode: "root.workspace.project.admin",
+			},
+		},
+		"testuser1@test.com",	
+	)
 
 	keysResp2, err := GetProject(
 		client, projectResp.Id, 
@@ -83,6 +96,9 @@ func TestSetWorkspace_Success(t *testing.T) {
 		if rId != workspaceResp.Id {
 			t.Fatalf("deleteWorkspace failed: %v", err)
 		}
+		if _, err := DeleteUser(client, priv); err != nil {
+			t.Logf("failed to delete user1 in cleanup: %v", err)
+		}
 	}()
 	
 	if err != nil {
@@ -93,8 +109,8 @@ func TestSetWorkspace_Success(t *testing.T) {
 
 
 func TestDeleteWorkspaceByPassword(t *testing.T) {	
-	client := novakeyclient.NewClient()
-	userResp , priv, _ := CreateUser(t, client, "", []novakeytypes.Workspace{}, []novakeytypes.Project{})
+	client := novakeyclient.NewClientFromLaunchConfig(launchCfg)
+	userResp , priv, _ := CreateUser(t, client, "", []novakeytypes.Workspace{}, []novakeytypes.Project{}, "")
 	
 	defer func() {
 		if _, err := DeleteUser(client, priv); err != nil {
@@ -124,8 +140,8 @@ func TestDeleteWorkspaceByPassword(t *testing.T) {
 //Users Test
 
 func TestNewUser_Success(t *testing.T) {		
-	client := novakeyclient.NewClient()	
-	resp, priv, err := CreateUser(t, client, "", []novakeytypes.Workspace{}, []novakeytypes.Project{})
+	client := novakeyclient.NewClientFromLaunchConfig(launchCfg)
+	resp, priv, err := CreateUser(t, client, "", []novakeytypes.Workspace{}, []novakeytypes.Project{}, "")
 	if err != nil {
 		t.Fatalf("createUser failed: %v", err)
 	}
@@ -145,8 +161,8 @@ func TestNewUser_Success(t *testing.T) {
 
 
 func TestDeleteUserByPassword(t *testing.T) {		
-	client := novakeyclient.NewClient()	
-	resp, _, err := CreateUser(t, client, "", []novakeytypes.Workspace{}, []novakeytypes.Project{})
+	client := novakeyclient.NewClientFromLaunchConfig(launchCfg)
+	resp, _, err := CreateUser(t, client, "", []novakeytypes.Workspace{}, []novakeytypes.Project{}, "")
 	if err != nil {
 		t.Fatalf("createUser failed: %v", err)
 	}
