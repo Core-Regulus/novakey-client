@@ -2,7 +2,7 @@ package test
 
 import (
 	"context"
-	"novakeyclient"
+	"github.com/core-regulus/novakey-client"
 	"os"
 	"path/filepath"
 	"testing"

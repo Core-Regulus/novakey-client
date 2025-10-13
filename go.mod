@@ -1,4 +1,4 @@
-module novakeyclient
+module github.com/core-regulus/novakey-client
 
 go 1.25.1
 

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/google/uuid"
-	"novakeyclient"
+	"github.com/core-regulus/novakey-client"
 	"github.com/core-regulus/novakey-types-go"
 
 )
