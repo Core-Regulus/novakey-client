@@ -43,8 +43,7 @@ func Test(t *testing.T) {
 				Id: launchCfg.Signer.Id,
     	},	
 		})
-		os.Remove(keyFilepath)
-		os.Remove(filepath.Join(dir, ".novakey-user.yaml"))
+		os.Remove(keyFilepath)		
 		os.Remove(filepath.Join(dir, "novakey-launch.yaml"))
 	}()
 

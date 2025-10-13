@@ -1,0 +1,2 @@
+email:          test-config@test.com
+privateKeyFile: ./testConfigs/.privateKey.pem
