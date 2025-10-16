@@ -59,7 +59,7 @@ func applyConfig(client *Client, privateKey string, cfg LaunchConfig) (LaunchCon
 
 }
 
-func NewClient(cfg InitConfig) (*Client, *LaunchConfig, error) {
+func NewClient(cfg InitConfig) (*LaunchConfig, *Client, error) {
 	launchCfg, err := Load(cfg)
 	if err != nil {
 		log.Fatalf("load config: %v", err)
@@ -68,11 +68,11 @@ func NewClient(cfg InitConfig) (*Client, *LaunchConfig, error) {
 	client := NewClientFromLaunchConfig(*launchCfg)
 	res, err := applyConfig(client, launchCfg.Signer.PrivateKey, *launchCfg)
 	if err != nil {
-		return nil, launchCfg, err
+		return launchCfg, client, err
 	}
 	
 	err = saveLaunchFile(cfg, &res)
-	return client, launchCfg, err
+	return launchCfg, client, err
 }
 
 

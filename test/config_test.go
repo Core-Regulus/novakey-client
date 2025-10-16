@@ -23,7 +23,7 @@ func Test(t *testing.T) {
 	keyFilepath := filepath.Join(dir, key)
 	GeneratekeyToFile(keyFilepath)
 	
-	client, launchCfg, err := novakeyclient.NewClient(novakeyclient.InitConfig{ Directory:  dir })	
+	launchCfg, client, err := novakeyclient.NewClient(novakeyclient.InitConfig{ Directory:  dir })	
 	if (err != nil) {
 		t.Fatalf("createClient from novakey-init failed: %v", err)
 	}
