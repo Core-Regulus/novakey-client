@@ -23,7 +23,7 @@ func Test(t *testing.T) {
 	keyFilepath := filepath.Join(dir, key)
 	GeneratekeyToFile(keyFilepath)
 	
-	launchCfg, client, err := novakeyclient.NewClient(novakeyclient.InitConfig{ Directory:  dir })	
+	launchCfg, err := novakeyclient.NewClient(novakeyclient.InitConfig{ Directory:  dir })	
 	if (err != nil) {
 		t.Fatalf("createClient from novakey-init failed: %v", err)
 	}
@@ -32,13 +32,13 @@ func Test(t *testing.T) {
 	checkFile(t, filepath.Join(dir, ".novakey-user.yaml"))
 	checkFile(t, filepath.Join(dir, "novakey-launch.yaml"))
 		
-	_, _, err = novakeyclient.NewClient(novakeyclient.InitConfig{ Directory:  dir })	
+	launchCfg, err = novakeyclient.NewClient(novakeyclient.InitConfig{ Directory:  dir })	
 	if (err != nil) {
 		t.Fatalf("createClient from novake-launch failed: %v", err)
 	}
 
 	defer func() {
-		client.DeleteUser(context.Background(), launchCfg.Signer.PrivateKey, novakeytypes.DeleteUserRequest{
+		launchCfg.Client.DeleteUser(context.Background(), launchCfg.Signer.PrivateKey, novakeytypes.DeleteUserRequest{
 				AuthEntity: novakeytypes.AuthEntity{
 				Id: launchCfg.Signer.Id,
     	},	

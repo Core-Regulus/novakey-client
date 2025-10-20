@@ -73,7 +73,7 @@ func Load(cfg InitConfig) (*LaunchConfig, error) {
 	if err == nil {
 		res.Signer = *user
 	}
-
+	res.Client = NewClientFromLaunchConfig(*res)
 	return res, err;
 }
 

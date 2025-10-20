@@ -9,9 +9,10 @@ import (
 	novakeytypes "github.com/core-regulus/novakey-types-go"	
 )
 
-func applyConfig(client *Client, privateKey string, cfg LaunchConfig) (LaunchConfig, error) {
+func applyConfig(privateKey string, cfg *LaunchConfig) (*LaunchConfig, error) {
 	res := cfg;
-	userRes :=client.SetUser(context.Background(), privateKey, "", novakeytypes.SetUserRequest{
+			
+	userRes := res.Client.SetUser(context.Background(), privateKey, "", novakeytypes.SetUserRequest{
 		Email: cfg.Signer.Email,
 	})
 
@@ -27,7 +28,7 @@ func applyConfig(client *Client, privateKey string, cfg LaunchConfig) (LaunchCon
 		Id: cfg.Workspace.Id,
 		Name: cfg.Workspace.Name,		
 	}
-	workspaceResp := client.SetWorkspace(context.Background(), privateKey, req)
+	workspaceResp := res.Client.SetWorkspace(context.Background(), privateKey, req)
 	
 	if (workspaceResp.Error.Error != "") {
 		return res, fmt.Errorf("set workspace: %s", novakeytypes.FormatErrorResponse(workspaceResp.Error))
@@ -40,7 +41,7 @@ func applyConfig(client *Client, privateKey string, cfg LaunchConfig) (LaunchCon
 		return res, nil
 	}
 
-	projectResp := client.SetProject(context.Background(), privateKey, novakeytypes.SetProjectRequest{
+	projectResp := res.Client.SetProject(context.Background(), privateKey, novakeytypes.SetProjectRequest{
 		Id: cfg.Workspace.Project.Id,
 		Name: cfg.Workspace.Project.Name,
 		Description: cfg.Workspace.Project.Description,
@@ -59,20 +60,19 @@ func applyConfig(client *Client, privateKey string, cfg LaunchConfig) (LaunchCon
 
 }
 
-func NewClient(cfg InitConfig) (*LaunchConfig, *Client, error) {
+func NewClient(cfg InitConfig) (*LaunchConfig, error) {
 	launchCfg, err := Load(cfg)
 	if err != nil {
 		log.Fatalf("load config: %v", err)
 	}
-		
-	client := NewClientFromLaunchConfig(*launchCfg)
-	res, err := applyConfig(client, launchCfg.Signer.PrivateKey, *launchCfg)
+			
+	res, err := applyConfig(launchCfg.Signer.PrivateKey, launchCfg)
 	if err != nil {
-		return launchCfg, client, err
+		return res, err
 	}
 	
-	err = saveLaunchFile(cfg, &res)
-	return launchCfg, client, err
+	err = saveLaunchFile(cfg, res)
+	return res, err
 }
 
 

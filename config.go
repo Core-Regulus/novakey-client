@@ -9,6 +9,7 @@ type InitConfig struct {
 }
 
 type LaunchConfig struct {
+	Client		*Client									`yaml:"-"`
 	Backend 	BakendConfig   					`yaml:"backend"`
 	Workspace novakeytypes.Workspace 	`yaml:"workspace"`	
 	Signer  	novakeytypes.Signer			`yaml:"-"`
