@@ -4,11 +4,13 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
-
 	novakeytypes "github.com/core-regulus/novakey-types-go"
 	"gopkg.in/yaml.v3"
 )
 
+var initFilename = ".novakey-init.yaml"
+var lockFilename = "novakey-lock.yaml"
+var userFilename = ".novakey-user.yaml"
 
 func stat(filename string) bool {
 	if _, err := os.Stat(filename); err == nil {
@@ -17,62 +19,76 @@ func stat(filename string) bool {
 	return false
 }
 
-func getLaunchFile(cfg InitConfig) (string, error) {
-	initFilename :=  filepath.Join(cfg.Directory, "novakey-init.yaml")
-	launchFilename := filepath.Join(cfg.Directory, "novakey-launch.yaml")
-
-	if stat(launchFilename) {
-		return launchFilename, nil
-	} 
-	if stat(initFilename) {
-		return initFilename, nil
+func getInitFile(cfg InitConfig) (string, error) {	
+	initFile := filepath.Join(cfg.Directory,initFilename)	
+	if stat(initFile) {
+		return initFile, nil
 	}
-	return "", errors.New("no config file found")	
+	
+	return "", errors.New("no .novakey-init.yaml file found")	
 }
 
-func saveLaunchFile(cfg InitConfig, launchCfg *LaunchConfig) error {
-	launchFilename := filepath.Join(cfg.Directory, "novakey-launch.yaml")
-	data, err := yaml.Marshal(launchCfg)
+func getUserFile(cfg InitConfig) (string, error) {
+	userFile :=  filepath.Join(cfg.Directory, userFilename)
+	
+	if stat(userFile) {
+		return userFile, nil
+	} 
+	return "", errors.New("no .novakey-user.yaml file found")	
+}
+
+func getLockFile(cfg InitConfig) (string, error) {
+	lockFile :=  filepath.Join(cfg.Directory, lockFilename)
+	
+	if stat(lockFile) {
+		return lockFile, nil
+	} 
+	return "", errors.New("no novakey-lock.yaml file found")	
+}
+
+func saveLockFile(cfg InitConfig, launchCfg *LaunchConfig) error {
+	lockFile := filepath.Join(cfg.Directory, lockFilename)
+	lockCfg := LockConfig{
+		WorkspaceId: launchCfg.Workspace.Id,
+		ProjectId:   launchCfg.Workspace.Project.Id,
+	}
+		
+	data, err := yaml.Marshal(lockCfg)
   if err != nil {
-    return errors.New("error in marshal config")	
+    return errors.New("error in marshal lockConfig")	
   }
     
-  err = os.WriteFile(launchFilename, data, 0644)
+  err = os.WriteFile(lockFile, data, 0644)
   if err != nil {
-    return errors.New("error writing config file")	
+    return errors.New("error writing novakey-lock.yaml file")	
   }
 
 	return nil
 }
 
-func getUserFile(cfg InitConfig) (string, error) {
-	userFilename :=  filepath.Join(cfg.Directory, ".novakey-user.yaml")
-	
-	if stat(userFilename) {
-		return userFilename, nil
-	} 
-	return "", errors.New("no user file found")	
-}
-
 func Load(cfg InitConfig) (*LaunchConfig, error) {	
-	launchFilename, err := getLaunchFile(cfg)
-	if err != nil {
-		return nil, err
-	}
-	userFilename, err := getUserFile(cfg)
-	if err != nil {
-		return nil, err
-	}
-	
-	user, err := loadUserFromYaml(userFilename)	
+	initFile, err := getInitFile(cfg)
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := loadYAML(launchFilename);	
+	userFile, err := getUserFile(cfg)
+	if err != nil {
+		return nil, err
+	}
+	
+	user, err := loadUserFromYaml(userFile)	
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := loadYAML(initFile);	
 	if err == nil {
 		res.Signer = *user
 	}
+	lock, _ := loadLockYaml(cfg)
+	res.Workspace.Id = lock.WorkspaceId
+	res.Workspace.Project.Id = lock.ProjectId	
 	res.Client = NewClientFromLaunchConfig(*res)
 	return res, err;
 }
@@ -89,6 +105,27 @@ func loadYAML(filename string) (*LaunchConfig, error) {
 	
 	if err := decoder.Decode(&res); err != nil {
 		return nil, err
+	}
+
+	return res, nil
+}
+
+func loadLockYaml(cfg InitConfig) (*LockConfig, error) {		
+	res := &LockConfig{}
+	filename, err := getLockFile(cfg)
+	if err != nil {
+		return res, err
+	}
+	file, err := os.Open(filename)
+	if err != nil {
+		return res, err;
+	}
+	defer file.Close()
+	
+	decoder := yaml.NewDecoder(file)
+	
+	if err := decoder.Decode(&res); err != nil {
+		return res, err
 	}
 
 	return res, nil

@@ -57,7 +57,6 @@ func applyConfig(privateKey string, cfg *LaunchConfig) (*LaunchConfig, error) {
 	res.Workspace.Project.RoleCode = projectResp.RoleCode;
 	res.Workspace.Project.Id = projectResp.Id;
 	return res, nil	
-
 }
 
 func NewClient(cfg InitConfig) (*LaunchConfig, error) {
@@ -71,7 +70,7 @@ func NewClient(cfg InitConfig) (*LaunchConfig, error) {
 		return res, err
 	}
 	
-	err = saveLaunchFile(cfg, res)
+	err = saveLockFile(cfg, res)
 	return res, err
 }
 

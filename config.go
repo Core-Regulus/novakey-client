@@ -1,7 +1,8 @@
 package novakeyclient
 
 import (
-	novakeytypes "github.com/core-regulus/novakey-types-go"	
+	novakeytypes "github.com/core-regulus/novakey-types-go"
+	"github.com/google/uuid"
 )
 
 type InitConfig struct {
@@ -24,5 +25,8 @@ type BakendConfig struct {
 	Endpoint    string  		`yaml:"endpoint"`	
 }
 
-
+type LockConfig struct {
+	WorkspaceId uuid.UUID `yaml:"workspaceId"`
+	ProjectId   uuid.UUID `yaml:"projectId"`
+}
 

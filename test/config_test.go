@@ -30,11 +30,11 @@ func Test(t *testing.T) {
 
 	checkFile(t, keyFilepath)
 	checkFile(t, filepath.Join(dir, ".novakey-user.yaml"))
-	checkFile(t, filepath.Join(dir, "novakey-launch.yaml"))
+	checkFile(t, filepath.Join(dir, "novakey-lock.yaml"))
 		
 	launchCfg, err = novakeyclient.NewClient(novakeyclient.InitConfig{ Directory:  dir })	
 	if (err != nil) {
-		t.Fatalf("createClient from novake-launch failed: %v", err)
+		t.Fatalf("createClient from novakey-lock failed: %v", err)
 	}
 
 	defer func() {
@@ -44,7 +44,7 @@ func Test(t *testing.T) {
     	},	
 		})
 		os.Remove(keyFilepath)		
-		os.Remove(filepath.Join(dir, "novakey-launch.yaml"))
+		os.Remove(filepath.Join(dir, "novakey-lock.yaml"))
 	}()
 
 		
