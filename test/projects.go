@@ -54,7 +54,7 @@ func GetProject(
 		Signer: novakeytypes.AuthEntity{},
 	}
 
-	resp := client.GetProject(context.Background(), Id, priv, req)	
+	resp := client.GetProject(context.Background(), priv, req)	
 	if resp.Status != 200 {		
 		return nil, fmt.Errorf("%s", novakeytypes.FormatErrorResponse(resp.Error))
 	}

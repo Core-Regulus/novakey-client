@@ -18,7 +18,7 @@ type LaunchConfig struct {
 
 type UserConfig struct {
 	Email 					string	`yaml:"email"`	
-	PrivateKeyFile 	string  `yaml:"privateKeyFile"`
+	PrivateKeyFile 	string  `yaml:"privateKeyFile"`	
 }
 
 type BakendConfig struct {
@@ -28,5 +28,6 @@ type BakendConfig struct {
 type LockConfig struct {
 	WorkspaceId uuid.UUID `yaml:"workspaceId"`
 	ProjectId   uuid.UUID `yaml:"projectId"`
+	Endpoint				string	`yaml:"endpoint"`
 }
 

@@ -52,6 +52,12 @@ github.com/core-regulus/novakey-types-go v0.1.18 h1:0ka/VB0NnWdD7L5t3HJ95Eb4dbo3
 github.com/core-regulus/novakey-types-go v0.1.18/go.mod h1:Q9oaPLxA4XmmopQw0WxzZPMLoKr9YEBOrcoWcz2UCqs=
 github.com/core-regulus/novakey-types-go v0.1.19 h1:nX6b8ke1VsTVDJ3UsnW3SEsmc+zDKqDqBd35uxr1Ffo=
 github.com/core-regulus/novakey-types-go v0.1.19/go.mod h1:Q9oaPLxA4XmmopQw0WxzZPMLoKr9YEBOrcoWcz2UCqs=
+github.com/core-regulus/novakey-types-go v0.1.20 h1:HEuRhDil5Ab0CYazYkntqkBRwtMG+II8lpz7O0gC+Bk=
+github.com/core-regulus/novakey-types-go v0.1.20/go.mod h1:Q9oaPLxA4XmmopQw0WxzZPMLoKr9YEBOrcoWcz2UCqs=
+github.com/core-regulus/novakey-types-go v0.1.21 h1:UJVf/50nLWHfZIUFxn+F4KjTraVZkCd2G5LlqFgan58=
+github.com/core-regulus/novakey-types-go v0.1.21/go.mod h1:Q9oaPLxA4XmmopQw0WxzZPMLoKr9YEBOrcoWcz2UCqs=
+github.com/core-regulus/novakey-types-go v0.1.22 h1:0zzWxsc2aWleDTzI+KjL6sZF8gMcei03s5cR2SLMJoE=
+github.com/core-regulus/novakey-types-go v0.1.22/go.mod h1:Q9oaPLxA4XmmopQw0WxzZPMLoKr9YEBOrcoWcz2UCqs=
 github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
 github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 golang.org/x/crypto v0.41.0 h1:WKYxWedPGCTVVl5+WHSSrOBT0O8lx32+zxmHxijgXp4=

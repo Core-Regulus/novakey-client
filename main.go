@@ -2,11 +2,12 @@ package novakeyclient
 
 import (
 	"context"
-	"log"
+	"errors"
+	"fmt"	
 	"net/http"
 	"strings"
-	"fmt"
-	novakeytypes "github.com/core-regulus/novakey-types-go"	
+
+	novakeytypes "github.com/core-regulus/novakey-types-go"
 )
 
 func applyConfig(privateKey string, cfg *LaunchConfig) (*LaunchConfig, error) {
@@ -60,9 +61,18 @@ func applyConfig(privateKey string, cfg *LaunchConfig) (*LaunchConfig, error) {
 }
 
 func NewClient(cfg InitConfig) (*LaunchConfig, error) {
-	launchCfg, err := Load(cfg)
+	launchCfg, err := LoadFromLockFile(cfg)	
+	if (err == nil) {
+		return launchCfg, nil
+	}
+
+	if !errors.Is(err, ErrLockFileNotFound) {
+		return nil, err;
+	}
+
+	launchCfg, err = LoadFromInitConfig(cfg)
 	if err != nil {
-		log.Fatalf("load config: %v", err)
+		return nil, err;
 	}
 			
 	res, err := applyConfig(launchCfg.Signer.PrivateKey, launchCfg)

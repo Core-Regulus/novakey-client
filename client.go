@@ -10,9 +10,7 @@ import (
 	"net/http"
 	"strings"
 	"time"
-
-	"github.com/core-regulus/novakey-types-go"
-	"github.com/google/uuid"
+	"github.com/core-regulus/novakey-types-go"	
 )
 
 type Client struct {
@@ -268,9 +266,36 @@ func (c *Client) DeleteProject (
 	return *uResp
 }
 
+func (c *Client) GetWorkspace (
+	ctx context.Context,	
+	privateKey string,	
+	req novakeytypes.GetWorkspaceRequest,
+) (novakeytypes.GetWorkspaceResponse) {
+
+	if c == nil {
+		return novakeytypes.GetWorkspaceResponse{
+			Error: novakeytypes.Error{
+				Status:  0,
+				Error:   "nil client",				
+			},
+		}		
+	}
+
+  sign(&req.Signer, privateKey)  
+	uResp, resp, err := send[novakeytypes.GetWorkspaceRequest, novakeytypes.GetWorkspaceResponse](c, ctx, req, "/workspaces/get");
+	if (err != nil) {
+		return novakeytypes.GetWorkspaceResponse{
+			Error: novakeytypes.Error{
+				Status:  resp.StatusCode,
+				Error:   err.Error(),				
+			},
+		}		
+	}
+	return *uResp
+}
+
 func (c *Client) GetProject (
 	ctx context.Context,
-	projectId uuid.UUID,
 	privateKey string,	
 	req novakeytypes.GetProjectRequest,
 ) (novakeytypes.GetProjectResponse) {
