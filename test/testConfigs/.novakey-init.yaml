@@ -7,6 +7,6 @@ workspace:
     name: Test Project
     description: This is a project for automated tests
     keys:
-      - name: test value
-        value: test key
+      - name: test key
+        value: test value
       

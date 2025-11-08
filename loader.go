@@ -16,6 +16,7 @@ var lockFilename = "novakey-lock.yaml"
 var userFilename = ".novakey-user.yaml"
 
 var ErrLockFileNotFound = errors.New("no novakey-lock.yaml file found")
+var ErrInitFileNotFound = errors.New("no .novakey-init.yaml file found")
 
 func stat(filename string) bool {
 	if _, err := os.Stat(filename); err == nil {
@@ -30,7 +31,7 @@ func getInitFile(cfg InitConfig) (string, error) {
 		return initFile, nil
 	}
 	
-	return "", errors.New("no .novakey-init.yaml file found")	
+	return "", fmt.Errorf("%w", ErrLockFileNotFound)
 }
 
 func getUserFile(cfg InitConfig) (string, error) {

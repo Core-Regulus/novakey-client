@@ -33,7 +33,7 @@ func TestSetWorkspace_Success(t *testing.T) {
 		client, workspaceResp.Id, 
 		priv, 
 		[]novakeytypes.Key{
-			{ Key: "TestKey", Value: "TestValue" },
+			{ Name: "TestKey", Value: "TestValue" },
 		},
 	)
 	if err != nil {
@@ -50,8 +50,8 @@ func TestSetWorkspace_Success(t *testing.T) {
 	}
 	
 	tKey := keysResp.Keys[0]
-	if (tKey.Key != "TestKey") || (tKey.Value != "TestValue") {
-		t.Fatalf("Key error received %s - %s", tKey.Key, tKey.Value)
+	if (tKey.Name != "TestKey") || (tKey.Value != "TestValue") {
+		t.Fatalf("1 Key error received %s - %s", tKey.Name, tKey.Value)
 	}
 		
 	_ , priv2, _ := CreateUser(t, client, priv,
@@ -76,8 +76,8 @@ func TestSetWorkspace_Success(t *testing.T) {
 	}
 	
 	tKey2 := keysResp2.Keys[0]
-	if (tKey2.Key != "TestKey") || (tKey2.Value != "TestValue") {
-		t.Fatalf("Key error received %s - %s", tKey2.Key, tKey2.Value)
+	if (tKey2.Name != "TestKey") || (tKey2.Value != "TestValue") {
+		t.Fatalf("2 Key error received %s - %s", tKey2.Name, tKey2.Value)
 	}
 
 	defer func() {

@@ -60,17 +60,8 @@ func applyConfig(privateKey string, cfg *LaunchConfig) (*LaunchConfig, error) {
 	return res, nil	
 }
 
-func NewClient(cfg InitConfig) (*LaunchConfig, error) {
-	launchCfg, err := LoadFromLockFile(cfg)	
-	if (err == nil) {
-		return launchCfg, nil
-	}
-
-	if !errors.Is(err, ErrLockFileNotFound) {
-		return nil, err;
-	}
-
-	launchCfg, err = LoadFromInitConfig(cfg)
+func loadFromInit(cfg InitConfig) (*LaunchConfig, error) {
+	launchCfg, err := LoadFromInitConfig(cfg)
 	if err != nil {
 		return nil, err;
 	}
@@ -82,6 +73,24 @@ func NewClient(cfg InitConfig) (*LaunchConfig, error) {
 	
 	err = saveLockFile(cfg, res)
 	return res, err
+}
+
+func NewClient(cfg InitConfig) (*LaunchConfig, error) {	
+	LaunchConfig, err := loadFromInit(cfg)
+	if (err == nil) {
+		return LaunchConfig, nil
+	}
+
+	if !errors.Is(err, ErrInitFileNotFound) {
+		return nil, err;
+	}
+
+	launchCfg, err := LoadFromLockFile(cfg)	
+	if (err == nil) {
+		return launchCfg, nil
+	}
+	
+	return launchCfg, err;
 }
 
 
